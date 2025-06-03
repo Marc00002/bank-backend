@@ -7,10 +7,24 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 // Middleware
+const allowedOrigins = [
+  'https://bank-frontend-nine.vercel.app',
+  'http://localhost:5173'
+];
+
 app.use(cors({
-  origin: 'https://bank-frontend-nine.vercel.app/',
+  origin: function (origin, callback) {
+    // allow requests with no origin like curl/postman
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    } else {
+      return callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true
 }));
+
 app.use(express.json());
 
 // Connect to MongoDB
